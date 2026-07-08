@@ -1,0 +1,12 @@
+{
+    "name": "@env-attr-cleaner/example-bun",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "bun run build.ts"
+    },
+    "dependencies": {
+        "env-attr-cleaner-bun": "workspace:*"
+    }
+}

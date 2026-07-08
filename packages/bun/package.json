@@ -1,0 +1,48 @@
+{
+    "name": "env-attr-cleaner-bun",
+    "version": "0.9.2",
+    "description": "Bun plugin to strip data-* attributes from production builds",
+    "author": "techmefr",
+    "license": "MIT",
+    "type": "module",
+    "exports": {
+        ".": {
+            "import": "./dist/index.mjs",
+            "require": "./dist/index.cjs"
+        }
+    },
+    "main": "./dist/index.cjs",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "keywords": [
+        "bun",
+        "bundler",
+        "data-attributes",
+        "testing",
+        "e2e",
+        "playwright",
+        "cypress"
+    ],
+    "homepage": "https://github.com/techmefr/env-attr-cleaner/tree/main/packages/bun#readme",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/techmefr/env-attr-cleaner.git",
+        "directory": "packages/bun"
+    },
+    "bugs": {
+        "url": "https://github.com/techmefr/env-attr-cleaner/issues"
+    },
+    "scripts": {
+        "build": "unbuild",
+        "test": "vitest run",
+        "typecheck": "tsc --noEmit"
+    },
+    "devDependencies": {
+        "unbuild": "^3.0.0",
+        "vitest": "^1.6.0",
+        "typescript": "^5.3.3"
+    }
+}

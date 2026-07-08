@@ -1,0 +1,14 @@
+{
+    "name": "@env-attr-cleaner/example-nuxt",
+    "version": "0.0.0",
+    "private": true,
+    "scripts": {
+        "dev": "nuxi dev",
+        "build": "nuxi build",
+        "preview": "nuxi preview"
+    },
+    "dependencies": {
+        "env-attr-cleaner": "workspace:*",
+        "nuxt": "^3.15.0"
+    }
+}
