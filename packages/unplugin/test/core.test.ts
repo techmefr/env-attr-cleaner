@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach } from 'vitest'
-import { matchPattern, shouldStrip, stripDataAttributes, resolvePatterns, DEFAULT_CONFIG } from '../src/core'
+import { matchPattern, shouldStrip, stripDataAttributes, stripDataAttributesWithMap, resolvePatterns, DEFAULT_CONFIG } from '../src/core'
 
 describe('matchPattern', () => {
     it('matches an exact pattern', () => {
@@ -129,6 +129,33 @@ describe('stripDataAttributes', () => {
     it('preserves bound framework attributes that do not match', () => {
         const code = '<i :data-hx-get="url" data-test-id="x"/>'
         expect(stripDataAttributes(code, ['data-test-*'])).toBe('<i :data-hx-get="url"/>')
+    })
+})
+
+describe('stripDataAttributesWithMap', () => {
+    it('returns null when the strip patterns list is empty', () => {
+        const code = '<button data-test-id="btn">Click</button>'
+        expect(stripDataAttributesWithMap(code, [])).toBeNull()
+    })
+
+    it('returns null when no attribute matches', () => {
+        const code = '<button data-hx-get="/api" class="primary">Click</button>'
+        expect(stripDataAttributesWithMap(code, ['data-test-*'])).toBeNull()
+    })
+
+    it('produces the same output as stripDataAttributes', () => {
+        const code =
+            '<input data-test-id="email" :data-debug-state="valid" data-test-active data-hx-get="/check" type="email">'
+        const patterns = ['data-test-*', 'data-debug-*']
+        const result = stripDataAttributesWithMap(code, patterns)
+        expect(result?.code).toBe(stripDataAttributes(code, patterns))
+    })
+
+    it('generates a sourcemap with non-empty mappings', () => {
+        const code = '<button data-test-id="btn">Click</button>'
+        const result = stripDataAttributesWithMap(code, ['data-test-*'])
+        expect(result?.map.version).toBe(3)
+        expect(result?.map.mappings.length).toBeGreaterThan(0)
     })
 })
 

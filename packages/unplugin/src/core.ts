@@ -1,3 +1,6 @@
+import MagicString from 'magic-string'
+import type { SourceMap } from 'magic-string'
+
 /**
  * Per-environment configuration for data-* attribute patterns to strip.
  * Each key is an environment name and its value is a list of glob-style patterns to remove.
@@ -20,6 +23,14 @@ export const DEFAULT_CONFIG: IEnvAttrCleanerConfig = {
         production: ['data-test-*', 'data-debug-*'],
     },
 }
+
+/**
+ * Matches a data-* attribute with its leading whitespace, in all recognised forms:
+ * quoted, expression, bound (Vue), unquoted, and value-less. The attribute name
+ * is captured in group 1.
+ */
+const DATA_ATTR_REGEX =
+    /\s+(?:v-bind:|:)?(data-[\w-]+)(?:\s*=\s*(?:"[^"]*"|'[^']*'|\{(?:[^{}]|\{[^{}]*\})*\}|[^\s"'`<>/{}]+)|(?=[\s/>]|$))/g
 
 /**
  * Returns whether a data-* attribute name matches a glob-style pattern.
@@ -60,10 +71,57 @@ export function shouldStrip(attr: string, patterns: string[]): boolean {
  * @returns The processed string with matched data-* attributes removed.
  */
 export function stripDataAttributes(code: string, stripPatterns: string[]): string {
-    return code.replace(
-        /\s+(?:v-bind:|:)?(data-[\w-]+)(?:\s*=\s*(?:"[^"]*"|'[^']*'|\{(?:[^{}]|\{[^{}]*\})*\}|[^\s"'`<>/{}]+)|(?=[\s/>]|$))/g,
-        (match, attr) => (shouldStrip(attr, stripPatterns) ? '' : match),
+    return code.replace(DATA_ATTR_REGEX, (match, attr) =>
+        shouldStrip(attr, stripPatterns) ? '' : match,
     )
+}
+
+/**
+ * Result of a sourcemap-aware strip operation.
+ */
+export interface IStripResult {
+    /** The processed code with matched data-* attributes removed. */
+    code: string
+    /** Sourcemap describing the transformation. */
+    map: SourceMap
+}
+
+/**
+ * Sourcemap-aware variant of {@link stripDataAttributes}, intended for
+ * bundler `transform` hooks. Removes matched data-* attributes through
+ * `magic-string` and generates a high-resolution sourcemap so the
+ * transformation keeps the sourcemap chain intact.
+ *
+ * @param code - The source string to process.
+ * @param stripPatterns - List of glob patterns for attributes to remove.
+ * @returns The processed code and its sourcemap, or `null` when nothing was stripped.
+ */
+export function stripDataAttributesWithMap(
+    code: string,
+    stripPatterns: string[],
+): IStripResult | null {
+    if (stripPatterns.length === 0) {
+        return null
+    }
+
+    const s = new MagicString(code)
+    let changed = false
+
+    for (const match of code.matchAll(DATA_ATTR_REGEX)) {
+        if (shouldStrip(match[1], stripPatterns)) {
+            s.remove(match.index, match.index + match[0].length)
+            changed = true
+        }
+    }
+
+    if (!changed) {
+        return null
+    }
+
+    return {
+        code: s.toString(),
+        map: s.generateMap({ hires: true }),
+    }
 }
 
 /**

@@ -150,6 +150,9 @@ importers:
 
   packages/unplugin:
     dependencies:
+      magic-string:
+        specifier: ^1.0.0
+        version: 1.0.0
       next:
         specifier: ^13.0.0 || ^14.0.0 || ^15.0.0
         version: 14.2.35(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -3632,6 +3635,9 @@ packages:
 
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
+
+  magic-string@1.0.0:
+    resolution: {integrity: sha512-CGvjzMN08iv6w1mm4/x3Gh1hLb4VnyRUA15FFpl6CsCIGGoe36k7kY5KNz9QDbSBN5I/fWHM6ZlIkUTa5xdUEA==}
 
   magicast@0.5.2:
     resolution: {integrity: sha512-E3ZJh4J3S9KfwdjZhe2afj6R9lGIN5Pher1pF39UGrXRqq/VDaGVIGN13BjHd2u8B61hArAGOnso7nBOouW3TQ==}
@@ -9123,6 +9129,10 @@ snapshots:
       magic-string: 0.30.21
 
   magic-string@0.30.21:
+    dependencies:
+      '@jridgewell/sourcemap-codec': 1.5.5
+
+  magic-string@1.0.0:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
 

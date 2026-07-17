@@ -62,58 +62,65 @@ describe('vite adapter', () => {
     })
 
     describe('transform', () => {
+        type TransformFn = (
+            code: string,
+            id: string,
+        ) => { code: string; map: { mappings: string } } | null | undefined
+
         it('strips data-test-* from .vue files in production', () => {
             process.env.NODE_ENV = 'production'
             const plugin = vite() as Plugin
             const code = '<template><button data-test-id="btn">Click</button></template>'
-            const result = (plugin.transform as (code: string, id: string) => string | null)(
-                code,
-                'component.vue',
-            )
-            expect(result).toBe('<template><button>Click</button></template>')
+            const result = (plugin.transform as TransformFn)(code, 'component.vue')
+            expect(result?.code).toBe('<template><button>Click</button></template>')
+        })
+
+        it('returns a sourcemap when code is transformed', () => {
+            process.env.NODE_ENV = 'production'
+            const plugin = vite() as Plugin
+            const code = '<template><button data-test-id="btn">Click</button></template>'
+            const result = (plugin.transform as TransformFn)(code, 'component.vue')
+            expect(result?.map).toBeDefined()
+            expect(result?.map.mappings.length).toBeGreaterThan(0)
         })
 
         it('ignores non-component files like CSS', () => {
             process.env.NODE_ENV = 'production'
             const plugin = vite() as Plugin
-            const result = (plugin.transform as (code: string, id: string) => string | undefined)(
-                '.btn { color: red }',
-                'styles.css',
-            )
-            expect(result).toBeUndefined()
+            const result = (plugin.transform as TransformFn)('.btn { color: red }', 'styles.css')
+            expect(result).toBeFalsy()
         })
 
         it('strips data-test-* from .tsx files in production', () => {
             process.env.NODE_ENV = 'production'
             const plugin = vite() as Plugin
             const code = '<button data-test-id="btn">Click</button>'
-            const result = (plugin.transform as (code: string, id: string) => string | null)(
-                code,
-                'Component.tsx',
-            )
-            expect(result).toBe('<button>Click</button>')
+            const result = (plugin.transform as TransformFn)(code, 'Component.tsx')
+            expect(result?.code).toBe('<button>Click</button>')
         })
 
         it('strips data-test-* from .svelte files in production', () => {
             process.env.NODE_ENV = 'production'
             const plugin = vite() as Plugin
             const code = '<button data-test-id="btn">Click</button>'
-            const result = (plugin.transform as (code: string, id: string) => string | null)(
-                code,
-                'App.svelte',
-            )
-            expect(result).toBe('<button>Click</button>')
+            const result = (plugin.transform as TransformFn)(code, 'App.svelte')
+            expect(result?.code).toBe('<button>Click</button>')
         })
 
-        it('preserves data-test-* from .vue files in development', () => {
+        it('returns null for .vue files in development so sourcemaps are untouched', () => {
             process.env.NODE_ENV = 'development'
             const plugin = vite() as Plugin
             const code = '<template><button data-test-id="btn">Click</button></template>'
-            const result = (plugin.transform as (code: string, id: string) => string | null)(
-                code,
-                'component.vue',
-            )
-            expect(result).toBe('<template><button data-test-id="btn">Click</button></template>')
+            const result = (plugin.transform as TransformFn)(code, 'component.vue')
+            expect(result).toBeNull()
+        })
+
+        it('returns null in production when nothing matches', () => {
+            process.env.NODE_ENV = 'production'
+            const plugin = vite() as Plugin
+            const code = '<template><button class="btn">Click</button></template>'
+            const result = (plugin.transform as TransformFn)(code, 'component.vue')
+            expect(result).toBeNull()
         })
     })
 })

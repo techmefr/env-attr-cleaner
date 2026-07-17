@@ -1,13 +1,15 @@
 import { createUnplugin } from 'unplugin'
 import {
     type IEnvAttrCleanerConfig,
+    type IStripResult,
     DEFAULT_CONFIG,
     stripDataAttributes,
+    stripDataAttributesWithMap,
     resolvePatterns,
 } from './core'
 
-export type { IEnvAttrCleanerConfig }
-export { matchPattern, shouldStrip, stripDataAttributes } from './core'
+export type { IEnvAttrCleanerConfig, IStripResult }
+export { matchPattern, shouldStrip, stripDataAttributes, stripDataAttributesWithMap } from './core'
 
 const FILE_PATTERN = /\.(vue|svelte|astro|jsx?|tsx?)$/
 
@@ -44,8 +46,8 @@ const envAttrCleanerPlugin = createUnplugin((userConfig: Partial<IEnvAttrCleaner
             return FILE_PATTERN.test(id)
         },
 
-        transform(code: string): string {
-            return stripDataAttributes(code, allowedPatterns)
+        transform(code: string): IStripResult | null {
+            return stripDataAttributesWithMap(code, allowedPatterns)
         },
 
         vite: {
