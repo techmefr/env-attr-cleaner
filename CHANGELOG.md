@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.0.1
+
+[compare changes](https://github.com/techmefr/env-attr-cleaner/compare/v1.0.0...v1.0.1)
+
+### 🩹 Fixes
+
+- **unplugin:** Widen vite peer dependency range to >=4.0.0 ([778a52c](https://github.com/techmefr/env-attr-cleaner/commit/778a52c))
+- **scripts:** Bump version and changelog in release script ([cecc90f](https://github.com/techmefr/env-attr-cleaner/commit/cecc90f))
+
+### ❤️ Contributors
+
+- G.compigni <g.compigni@skera.com>
+
 ## 1.0.0
 
 Initial public release.
