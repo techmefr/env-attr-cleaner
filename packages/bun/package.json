@@ -1,6 +1,6 @@
 {
     "name": "env-attr-cleaner-bun",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Bun plugin to strip data-* attributes from production builds",
     "author": "techmefr",
     "license": "MIT",
