@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.0.2
+
+[compare changes](https://github.com/techmefr/env-attr-cleaner/compare/v1.0.1...v1.0.2)
+
+### 🩹 Fixes
+
+- **unplugin:** Widen webpack and next peer dependency ranges ([27c64f1](https://github.com/techmefr/env-attr-cleaner/commit/27c64f1))
+
+### ❤️ Contributors
+
+- G.compigni <g.compigni@skera.com>
+
 ## v1.0.1
 
 [compare changes](https://github.com/techmefr/env-attr-cleaner/compare/v1.0.0...v1.0.1)
