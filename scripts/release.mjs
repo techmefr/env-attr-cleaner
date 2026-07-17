@@ -4,7 +4,7 @@ import { readFileSync, writeFileSync } from 'fs'
 const run = cmd => execSync(cmd, { stdio: 'inherit' })
 
 // Generate changelog and bump root version
-run('changelogen --no-commit --no-tag')
+run('changelogen --bump')
 
 // Read bumped version
 const root = JSON.parse(readFileSync('package.json', 'utf8'))
