@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
@@ -32,8 +33,23 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
 
+      # main is protected (PR required): release through a branch + PR instead of
+      # pushing directly. Merging the PR updates main, which is what triggers publish.yml.
+      - name: Create release branch
+        run: git checkout -b "release/${{ github.run_id }}"
+
       - name: Release
         run: pnpm release
 
-      - name: Push
-        run: git push --follow-tags
+      - name: Push release branch
+        run: git push origin "release/${{ github.run_id }}" --follow-tags
+
+      - name: Open and merge the release PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          gh pr create --base main --head "release/${{ github.run_id }}" \
+            --title "chore(release): v${VERSION}" \
+            --body "Automated release PR — merging updates main, which triggers publish.yml."
+          gh pr merge "release/${{ github.run_id }}" --merge --delete-branch
