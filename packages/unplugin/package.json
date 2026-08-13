@@ -1,6 +1,6 @@
 {
     "name": "env-attr-cleaner",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "description": "Universal plugin to strip data-* attributes from production builds",
     "author": "techmefr",
     "license": "MIT",

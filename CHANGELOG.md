@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.0.6
+
+[compare changes](https://github.com/techmefr/env-attr-cleaner/compare/v1.0.5...v1.0.6)
+
+### 🩹 Fixes
+
+- **release:** Pin npm to 11.x in publish.yml, not latest (needs node 22) ([#7](https://github.com/techmefr/env-attr-cleaner/pull/7))
+
+### ❤️ Contributors
+
+- Gaetan Compigni ([@techmefr](http://github.com/techmefr))
+
 ## v1.0.5
 
 [compare changes](https://github.com/techmefr/env-attr-cleaner/compare/v1.0.4...v1.0.5)
