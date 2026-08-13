@@ -6,6 +6,15 @@ on:
     paths:
       - packages/unplugin/package.json
       - packages/bun/package.json
+  # release.yml merges its release PR using GITHUB_TOKEN, and GitHub Actions never
+  # lets a GITHUB_TOKEN-authenticated push trigger another workflow (anti-recursion
+  # guard) — so the `push` trigger above never fires for that path. workflow_run
+  # isn't subject to that restriction, so it's the one that actually fires after an
+  # automated release. Kept both: workflow_run covers the bot-driven release, push
+  # still covers a human merging a manual version-bump PR directly.
+  workflow_run:
+    workflows: [Release]
+    types: [completed]
 
 permissions:
   contents: read
@@ -13,9 +22,12 @@ permissions:
 
 jobs:
   publish:
+    if: github.event_name == 'push' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
 
       - uses: pnpm/action-setup@v2
         with:
