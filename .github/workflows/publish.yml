@@ -1,0 +1,51 @@
+name: Publish to npm
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - packages/unplugin/package.json
+      - packages/bun/package.json
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+          registry-url: https://registry.npmjs.org
+
+      # Trusted Publishing (OIDC) needs npm >= 11.5.1; setup-node's bundled npm may be older.
+      - run: npm install -g npm@latest
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm build
+
+      - name: Publish packages whose version changed
+        run: |
+          for dir in packages/unplugin packages/bun; do
+            PKG_NAME=$(node -p "require('./$dir/package.json').name")
+            LOCAL_VERSION=$(node -p "require('./$dir/package.json').version")
+            PUBLISHED_VERSION=$(npm view "$PKG_NAME" version 2>/dev/null || echo "0.0.0")
+            if [ "$LOCAL_VERSION" != "$PUBLISHED_VERSION" ]; then
+              echo "Publishing $PKG_NAME@$LOCAL_VERSION (was $PUBLISHED_VERSION)"
+              (cd "$dir" && npm publish)
+            else
+              echo "$PKG_NAME@$LOCAL_VERSION already published, skipping."
+            fi
+          done
