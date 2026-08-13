@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.0.5
+
+[compare changes](https://github.com/techmefr/env-attr-cleaner/compare/v1.0.4...v1.0.5)
+
+### 🤖 CI
+
+- **release:** Trigger publish via workflow_run, not just push ([#5](https://github.com/techmefr/env-attr-cleaner/pull/5))
+
+### ❤️ Contributors
+
+- Gaetan Compigni ([@techmefr](http://github.com/techmefr))
+
 ## v1.0.4
 
 [compare changes](https://github.com/techmefr/env-attr-cleaner/compare/v1.0.3...v1.0.4)
