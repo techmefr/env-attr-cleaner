@@ -40,7 +40,9 @@ jobs:
           registry-url: https://registry.npmjs.org
 
       # Trusted Publishing (OIDC) needs npm >= 11.5.1; setup-node's bundled npm may be older.
-      - run: npm install -g npm@latest
+      # Pinned to the 11.x line, not "npm@latest": npm 12 requires Node >= 22, and this
+      # workflow runs on Node 20 to match ci.yml.
+      - run: npm install -g npm@11
 
       - name: Install dependencies
         run: pnpm install
