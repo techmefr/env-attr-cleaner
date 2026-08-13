@@ -1,5 +1,22 @@
 # Changelog
 
+## v1.0.4
+
+[compare changes](https://github.com/techmefr/env-attr-cleaner/compare/v1.0.3...v1.0.4)
+
+### 🩹 Fixes
+
+- **deps:** Resync pnpm-lock.yaml with package.json specs ([#3](https://github.com/techmefr/env-attr-cleaner/pull/3))
+
+### 🤖 CI
+
+- **release:** Publish via npm trusted publishing on version bump ([#1](https://github.com/techmefr/env-attr-cleaner/pull/1))
+- **release:** Open a pr instead of pushing to main directly ([#2](https://github.com/techmefr/env-attr-cleaner/pull/2))
+
+### ❤️ Contributors
+
+- Gaetan Compigni ([@techmefr](http://github.com/techmefr))
+
 ## v1.0.3
 
 [compare changes](https://github.com/techmefr/env-attr-cleaner/compare/v1.0.2...v1.0.3)
