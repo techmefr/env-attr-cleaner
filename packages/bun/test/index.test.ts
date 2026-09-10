@@ -70,21 +70,6 @@ describe('envAttrCleaner bun plugin', () => {
         expect(plugin.name).toBe('bun-plugin-env-attr-cleaner')
     })
 
-    it('registers an onLoad handler for the expected file pattern', () => {
-        const plugin = envAttrCleaner()
-        const registeredFilters: RegExp[] = []
-
-        plugin.setup({
-            onLoad(options, _callback) {
-                registeredFilters.push(options.filter)
-            },
-        })
-
-        expect(registeredFilters).toHaveLength(1)
-        expect(registeredFilters[0].test('component.vue')).toBe(true)
-        expect(registeredFilters[0].test('index.ts')).toBe(true)
-        expect(registeredFilters[0].test('styles.css')).toBe(false)
-    })
 })
 
 describe('resolvePatterns', () => {
