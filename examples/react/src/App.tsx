@@ -11,7 +11,7 @@ export function App() {
 
     return (
         <main>
-            <h1 data-test-id="page-title">DataPower — React Example</h1>
+            <h1 data-test-id="page-title">env-attr-cleaner — React Example</h1>
 
             <section data-test-id="login-section">
                 <form data-test-id="login-form" onSubmit={handleSubmit}>

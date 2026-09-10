@@ -1,7 +1,10 @@
-
 # Bun Installation
 
 **Status**: Tested and validated
+
+Handles `.ts`, `.tsx`, `.js`, `.jsx`, `.mjs` and `.cjs` — what Bun's bundler can load. For `.vue` or
+`.svelte` single-file components, use [`env-attr-cleaner`](../../packages/unplugin) and its Vite
+adapter: Bun has no loader for those.
 
 ## Installation
 
@@ -45,7 +48,7 @@ export function LoginForm() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        // gerer la connexion
+        // handle the sign-in
     }
 
     return (
@@ -69,7 +72,7 @@ export function LoginForm() {
                 data-test-class="form-button"
                 type="submit"
             >
-                Connexion
+                Sign in
             </button>
         </form>
     )
@@ -92,7 +95,7 @@ app.get('/', (c) => {
             <body>
                 <form data-test-id="contact-form">
                     <input data-test-id="contact-email" type="email" />
-                    <button data-test-id="contact-submit">Envoyer</button>
+                    <button data-test-id="contact-submit">Send</button>
                 </form>
             </body>
         </html>
@@ -120,7 +123,7 @@ export default app
 // e2e/login.spec.ts
 import { test, expect } from '@playwright/test'
 
-test('utilisateur peut se connecter', async ({ page }) => {
+test('a user can sign in', async ({ page }) => {
     await page.goto('/')
 
     await page.locator('[data-test-id="login-email"]').fill('user@example.com')
@@ -134,10 +137,10 @@ test('utilisateur peut se connecter', async ({ page }) => {
 ## Verify Production Build
 
 ```bash
-# Build pour la production
+# Build for production
 NODE_ENV=production bun run build.ts
 
-# Verifier la sortie
+# Check the output
 cat dist/index.js | grep "data-test"
-# Ne devrait rien retourner
+# Should return nothing
 ```

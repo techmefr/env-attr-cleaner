@@ -2,7 +2,14 @@
 
 **Status**: Tested and validated
 
-Next.js compiles with webpack, so env-attr-cleaner is wired in through the **webpack adapter**. It works with both the App Router and the Pages Router, on Server and Client Components alike, because the plugin runs on the raw source files before the framework compiler.
+Next.js compiles with webpack, so env-attr-cleaner is wired in through the **webpack adapter**. It works
+with both the App Router and the Pages Router, on Server and Client Components alike, because the plugin
+runs on the raw source files before the framework compiler.
+
+> **Turbopack bypasses this.** `next build --turbopack` and `next dev --turbo` do not read the `webpack()`
+> hook, so the plugin never runs and your `data-test-*` attributes ship to production. There is no
+> Turbopack adapter today. Build with webpack — drop `--turbopack` from your build script — and check the
+> output as shown at the end of this guide.
 
 ## Installation
 

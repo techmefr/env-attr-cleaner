@@ -1,4 +1,3 @@
-
 # Astro Installation
 
 **Status**: Tested and validated

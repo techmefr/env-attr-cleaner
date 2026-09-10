@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-    title: 'DataPower — Next.js Example',
+    title: 'env-attr-cleaner — Next.js Example',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
