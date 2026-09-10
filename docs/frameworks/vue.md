@@ -1,4 +1,3 @@
-
 # Vue Installation
 
 **Status**: Tested and validated

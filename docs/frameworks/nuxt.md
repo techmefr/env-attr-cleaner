@@ -1,4 +1,3 @@
-
 # Nuxt Installation
 
 **Status**: Tested and validated
@@ -159,10 +158,14 @@ describe('Login', () => {
 # Build for production
 pnpm build
 
-# Check output - no data-test-* attributes
-cat .output/public/index.html | grep "data-test"
+# Check the output - no data-test-* attributes
+grep -r "data-test" .output/
 # Should return nothing
 ```
+
+`nuxi build` produces an SSR build, where there is no prerendered
+`.output/public/index.html` to read — markup is rendered at request time from the server chunks.
+Grepping the whole `.output/` directory covers both that layout and a `nuxi generate` one.
 
 ---
 

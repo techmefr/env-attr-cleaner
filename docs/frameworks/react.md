@@ -205,7 +205,7 @@ grep -r "data-test" dist/
 # Should return nothing
 ```
 
-## Create React App / webpack
+## Webpack
 
 If your React app is bundled with webpack instead of Vite, use the webpack adapter:
 
@@ -228,6 +228,10 @@ module.exports = {
 ```
 
 See the [Next.js guide](./nextjs.md) for a complete webpack-based example.
+
+Create React App does not expose `webpack.config.js`, so this snippet does not apply to it as such:
+you need `eject`, or a wrapper like craco, to reach the webpack config. CRA has been deprecated since
+2025 — migrating to Vite is the better answer, and then the top of this guide applies.
 
 ---
 

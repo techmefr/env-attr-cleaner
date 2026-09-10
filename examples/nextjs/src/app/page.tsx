@@ -13,7 +13,7 @@ export default function Page() {
 
     return (
         <main>
-            <h1 data-test-id="page-title">DataPower — Next.js Example</h1>
+            <h1 data-test-id="page-title">env-attr-cleaner — Next.js Example</h1>
 
             <section data-test-id="login-section">
                 <form data-test-id="login-form" onSubmit={handleSubmit}>

@@ -44,7 +44,9 @@ Why use `data-test-id` instead of CSS classes or complex selectors?
 
 Adopting this approach makes your tests more durable and your code more maintainable.
 
-See our [testing strategy](./docs/strategy.md) and [naming conventions](./docs/conventions.md).
+The testing methodology itself — naming conventions, the unit / integration / E2E layers, scenario
+snippets — lives in the separate [test-casebook](https://github.com/techmefr/test-casebook) repo. This
+one is the build-time cleaner.
 
 ---
 
@@ -57,7 +59,7 @@ Choose your framework:
 | **Nuxt** | [Nuxt Setup](./docs/frameworks/nuxt.md) | [examples/nuxt](./examples/nuxt) |
 | **Vue** | [Vue Setup](./docs/frameworks/vue.md) | [examples/vue](./examples/vue) |
 | **React** | [React Setup](./docs/frameworks/react.md) | [examples/react](./examples/react) |
-| **SvelteKit** | [SvelteKit Setup](./docs/frameworks/svelte.md) | [examples/svelte](./examples/svelte) |
+| **Svelte** | [Svelte Setup](./docs/frameworks/svelte.md) | [examples/svelte](./examples/svelte) |
 | **Next.js** | [Next.js Setup](./docs/frameworks/nextjs.md) | [examples/nextjs](./examples/nextjs) |
 | **Bun** | [Bun Setup](./docs/frameworks/bun.md) | [examples/bun](./examples/bun) |
 | **Astro** | [Astro Setup](./docs/frameworks/astro.md) | [examples/astro](./examples/astro) |
@@ -67,13 +69,21 @@ Choose your framework:
 
 ## Use with an AI coding agent
 
-Hand [**AGENTS.md**](./AGENTS.md) to an AI coding agent (Claude Code, etc.) — or point it at this repository — and ask it to set up the methodology in your project. The playbook drives the agent end to end: detect your framework, install and wire the cleaner, install the test runner, add the `data-test-*` hooks, write the unit / integration / E2E tests, and verify the production build is clean.
+[**AGENTS.md**](./AGENTS.md) is the contribution guide for an agent working on **this repository** —
+how the packages are laid out, what has to stay in sync between them, how to run the gate.
+
+To have an agent set the methodology up in *your* project — detect the framework, wire the cleaner,
+install the test runner, add the `data-test-*` hooks, write the tests — point it at
+[test-casebook](https://github.com/techmefr/test-casebook) instead. The dependency is one-way: the
+methodology knows about this tool, this tool knows nothing about the methodology.
 
 ---
 
 ## Configuration
 
-By default, env-attr-cleaner removes all `data-*` attributes in production and keeps `data-test-*` in development.
+By default, env-attr-cleaner strips `data-test-*` and `data-debug-*` in `staging` and `production`, and
+strips nothing at all in `development` and `test`. Every other `data-*` attribute is always preserved.
+The keys below are `NODE_ENV` values, and `*` matches any run of attribute-name characters.
 
 ```ts
 envAttrCleaner({
@@ -85,6 +95,30 @@ envAttrCleaner({
     }
 })
 ```
+
+Rather than restating the defaults to extend them, import them:
+
+```ts
+import { DEFAULT_CONFIG } from 'env-attr-cleaner'
+
+envAttrCleaner({
+    environments: {
+        ...DEFAULT_CONFIG.environments,
+        production: [...DEFAULT_CONFIG.environments.production, 'data-analytics-*']
+    }
+})
+```
+
+### NODE_ENV, precisely
+
+Patterns are resolved from `NODE_ENV` when the plugin is constructed, i.e. when your config file is
+evaluated. `vite build` and `next build` set it to `production` themselves, so the common case needs
+nothing. Two traps:
+
+- **`--mode` is not `NODE_ENV`.** `vite build --mode staging` still sets `NODE_ENV=production`, so the
+  `staging` key is not reachable that way — use `NODE_ENV=staging vite build`. Bun sets nothing at all.
+- **An unconfigured `NODE_ENV` strips nothing**, and says so on stderr. `NODE_ENV=prod` is not
+  `production`.
 
 ---
 
@@ -122,7 +156,18 @@ env-attr-cleaner removes matching `data-*` attributes in every common form — s
 <button data-test-active>             // value-less
 ```
 
-All of these are removed in `staging`/`production` when they match a configured pattern. Every other `data-*` attribute (HTMX, Alpine.js, Stimulus…) is preserved — including its bound forms (`:data-hx-get`).
+All of these are removed in `staging`/`production` when they match a configured pattern. Every other
+`data-*` attribute (HTMX, Alpine.js, Stimulus…) is preserved — including its bound forms
+(`:data-hx-get`).
+
+Attributes are only stripped **inside a tag opening**. Attribute-looking text anywhere else is left
+alone, so the strip cannot damage your code:
+
+```ts
+const msg = 'set data-test-id="foo" on the button'   // untouched
+const q = `?a=1 data-test-id=${id}&keep=2`            // untouched
+const html = `<button data-test-id="x">Go</button>`   // stripped: it is markup
+```
 
 ---
 
@@ -142,17 +187,8 @@ Each guide ships copy-paste snippets for the three layers:
 
 > **Unit** — one component in isolation. **Integration** — several components / a full view together. **E2E** — the real app in a browser.
 
-Need deeper, scenario-based snippets (forms, tables, modals, auth, i18n, state…)? See the [Nuxt + Vitest testing guide](./docs/testing-guide/README.md):
-
-- Navigation & Routing
-- Forms & Validation
-- Tables & Lists
-- Modals & Dialogs
-- Permissions & Auth
-- API & Data Fetching
-- i18n & Translations
-- Stores & State Management
-- And more...
+Need deeper, scenario-based snippets — navigation, forms, tables, modals, auth, data fetching, i18n,
+state? They live in [test-casebook](https://github.com/techmefr/test-casebook), not here.
 
 ---
 
@@ -160,16 +196,22 @@ Need deeper, scenario-based snippets (forms, tables, modals, auth, i18n, state�
 
 | Package | Version | Bundlers |
 |---------|---------|---------|
-| [env-attr-cleaner](./packages/unplugin) | 0.9.2 | Vite, Rollup, Webpack, esbuild — Nuxt, Vue, React, SvelteKit, Astro, Next.js |
-| [env-attr-cleaner-bun](./packages/bun) | 0.9.2 | Bun |
+| [env-attr-cleaner](./packages/unplugin) | 1.0.6 | Vite, Rollup, Webpack, esbuild — Nuxt, Vue, React, Svelte, Astro, Next.js |
+| [env-attr-cleaner-bun](./packages/bun) | 1.0.6 | Bun |
 
 ```bash
 # Vite / Rollup / Webpack / esbuild / Nuxt / Next.js
-npm install env-attr-cleaner
+npm install -D env-attr-cleaner
 
 # Bun
-bun add env-attr-cleaner-bun
+bun add -D env-attr-cleaner-bun
 ```
+
+`env-attr-cleaner` requires Node `^20.19.0 || >=22.12.0` (its `unplugin` dependency does);
+`env-attr-cleaner-bun` requires Node `>=18` and has no dependencies at all.
+
+The Bun package handles `.ts`, `.tsx`, `.js`, `.jsx`, `.mjs` and `.cjs` — what Bun's bundler can load.
+`.vue` and `.svelte` go through `env-attr-cleaner` and its Vite adapter.
 
 ---
 
