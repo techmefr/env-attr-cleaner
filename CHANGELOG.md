@@ -1,5 +1,31 @@
 # Changelog
 
+## v1.0.7
+
+[compare changes](https://github.com/techmefr/env-attr-cleaner/compare/v1.0.6...v1.0.7)
+
+### 🩹 Fixes
+
+- **strip:** Align the bun package with the documented attribute forms ([#16](https://github.com/techmefr/env-attr-cleaner/pull/16))
+- **strip:** Confine the strip to tag openings ([#19](https://github.com/techmefr/env-attr-cleaner/pull/19))
+
+### 📖 Documentation
+
+- Give both packages a readme and fix what the docs got wrong ([#21](https://github.com/techmefr/env-attr-cleaner/pull/21))
+
+### 🏡 Chore
+
+- **tooling:** Typecheck the tests, enforce coverage, add a formatter ([#22](https://github.com/techmefr/env-attr-cleaner/pull/22))
+
+### 🤖 CI
+
+- **release:** Verify the release pr actually merged ([#9](https://github.com/techmefr/env-attr-cleaner/pull/9))
+- **publish:** Keep third-party scripts out of the oidc job ([#10](https://github.com/techmefr/env-attr-cleaner/pull/10))
+
+### ❤️ Contributors
+
+- Gaetan Compigni ([@techmefr](https://github.com/techmefr))
+
 ## v1.0.6
 
 [compare changes](https://github.com/techmefr/env-attr-cleaner/compare/v1.0.5...v1.0.6)
