@@ -1,0 +1,27 @@
+version: 2
+
+updates:
+  # The GitHub Actions in these workflows are pinned to mutable tags (@v4, @v2), and
+  # publish.yml holds the npm Trusted Publishing identity — keeping the actions current
+  # is the cheap half of that; grouped so one PR covers all three workflows.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns: ['*']
+
+  # Only the published packages are worth an update PR. examples/* exist to be built
+  # once per CI run; their framework closure would drown this in noise.
+  - package-ecosystem: npm
+    directories:
+      - /
+      - /packages/unplugin
+      - /packages/bun
+    schedule:
+      interval: monthly
+    groups:
+      dev-dependencies:
+        dependency-type: development
+        patterns: ['*']

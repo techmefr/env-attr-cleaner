@@ -18,12 +18,16 @@ on:
 
 permissions:
   contents: read
-  id-token: write
 
 jobs:
   publish:
     if: github.event_name == 'push' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Scoped to this job, not the workflow: the npm Trusted Publishing identity
+      # should be reachable from as little code as possible.
+      id-token: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -38,22 +42,43 @@ jobs:
           registry-url: https://registry.npmjs.org
 
       # Trusted Publishing (OIDC) needs npm >= 11.5.1; setup-node's bundled npm may be older.
-      # Pinned to the 11.x line, not "npm@latest": npm 12 requires Node >= 22, and this
-      # workflow runs on Node 20 to match ci.yml.
-      - run: npm install -g npm@11
+      # Pinned to an exact version, not "npm@11" or "npm@latest": this job holds the npm
+      # publishing identity, so the tooling it downloads should not float. npm 12 also
+      # requires Node >= 22, and this workflow runs on Node 20 to match ci.yml.
+      - run: npm install -g npm@11.19.1
 
+      # This job holds the npm publishing identity, so keep third-party code from running
+      # in it. pnpm-workspace.yaml covers examples/*, and shamefully-hoist puts that whole
+      # framework closure in the root node_modules whatever --filter says — so the guard
+      # that actually holds is --ignore-scripts, which keeps every lifecycle script in that
+      # closure from executing next to ACTIONS_ID_TOKEN_REQUEST_TOKEN. Neither published
+      # package has a lifecycle script, and neither needs one to build.
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
+      # Only the published packages: an example app's build would otherwise run here too,
+      # and a regression in one of them would block a release.
       - name: Build
-        run: pnpm build
+        run: pnpm --filter './packages/*' build
 
       - name: Publish packages whose version changed
         run: |
           for dir in packages/unplugin packages/bun; do
             PKG_NAME=$(node -p "require('./$dir/package.json').name")
             LOCAL_VERSION=$(node -p "require('./$dir/package.json').version")
-            PUBLISHED_VERSION=$(npm view "$PKG_NAME" version 2>/dev/null || echo "0.0.0")
+            # A registry outage used to be read as "never published", which then tried to
+            # publish. Only a genuine 404 counts as not-yet-published; anything else fails
+            # the job instead of guessing.
+            if ! VIEW_OUTPUT=$(npm view "$PKG_NAME" version 2>&1); then
+              if printf '%s' "$VIEW_OUTPUT" | grep -q 'E404'; then
+                PUBLISHED_VERSION="0.0.0"
+              else
+                echo "::error::could not read the published version of $PKG_NAME: $VIEW_OUTPUT"
+                exit 1
+              fi
+            else
+              PUBLISHED_VERSION="$VIEW_OUTPUT"
+            fi
             if [ "$LOCAL_VERSION" != "$PUBLISHED_VERSION" ]; then
               echo "Publishing $PKG_NAME@$LOCAL_VERSION (was $PUBLISHED_VERSION)"
               (cd "$dir" && npm publish)
