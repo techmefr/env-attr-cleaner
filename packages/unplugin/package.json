@@ -47,7 +47,7 @@
     },
     "dependencies": {
         "magic-string": "^1.0.0",
-        "unplugin": "^2.0.0"
+        "unplugin": "^3.3.0"
     },
     "peerDependencies": {
         "next": ">=13.0.0",
