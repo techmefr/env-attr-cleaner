@@ -16,9 +16,7 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 9
+      - uses: pnpm/action-setup@v4
 
       - uses: actions/setup-node@v4
         with:
@@ -48,8 +46,32 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          BRANCH="release/${{ github.run_id }}"
           VERSION=$(node -p "require('./package.json').version")
-          gh pr create --base main --head "release/${{ github.run_id }}" \
+          PR=$(gh pr create --base main --head "$BRANCH" \
             --title "chore(release): v${VERSION}" \
-            --body "Automated release PR — merging updates main, which triggers publish.yml."
-          gh pr merge "release/${{ github.run_id }}" --merge --delete-branch
+            --body "Automated release PR — merging updates main, which triggers publish.yml.")
+          gh pr merge "$PR" --merge --delete-branch
+
+          # gh pr merge can report success while the PR stays open: the merge commit lands
+          # on main but the PR is left dangling, and it turns conflicting as soon as main
+          # moves on. That is what happened to the v1.0.6 release PR. Confirm the final
+          # state instead of trusting the command, and close a dangling PR whose commit is
+          # already on main rather than leaving a ghost open.
+          STATE=""
+          for _ in $(seq 10); do
+            STATE=$(gh pr view "$PR" --json state --jq .state)
+            [ "$STATE" = "MERGED" ] && break
+            sleep 3
+          done
+
+          if [ "$STATE" != "MERGED" ]; then
+            git fetch origin main
+            if git merge-base --is-ancestor HEAD origin/main; then
+              gh pr close "$PR" --delete-branch \
+                --comment "Release commit is already on main; closing this dangling PR."
+            else
+              echo "::error::release PR for v${VERSION} is $STATE and its commit never reached main"
+              exit 1
+            fi
+          fi
