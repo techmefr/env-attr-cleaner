@@ -1,5 +1,12 @@
 import { describe, it, expect, afterEach } from 'vitest'
-import { matchPattern, shouldStrip, stripDataAttributes, stripDataAttributesWithMap, resolvePatterns, DEFAULT_CONFIG } from '../src/core'
+import {
+    matchPattern,
+    shouldStrip,
+    stripDataAttributes,
+    stripDataAttributesWithMap,
+    resolvePatterns,
+    DEFAULT_CONFIG,
+} from '../src/core'
 
 describe('matchPattern', () => {
     it('matches an exact pattern', () => {
@@ -47,12 +54,16 @@ describe('shouldStrip — edge cases', () => {
 describe('stripDataAttributes', () => {
     it('strips nothing when the strip patterns list is empty', () => {
         const code = '<button data-test-id="btn" data-hx-get="/api">Click</button>'
-        expect(stripDataAttributes(code, [])).toBe('<button data-test-id="btn" data-hx-get="/api">Click</button>')
+        expect(stripDataAttributes(code, [])).toBe(
+            '<button data-test-id="btn" data-hx-get="/api">Click</button>',
+        )
     })
 
     it('strips only matched attributes and preserves the rest', () => {
         const code = '<button data-test-id="btn" data-hx-get="/api">Click</button>'
-        expect(stripDataAttributes(code, ['data-test-*'])).toBe('<button data-hx-get="/api">Click</button>')
+        expect(stripDataAttributes(code, ['data-test-*'])).toBe(
+            '<button data-hx-get="/api">Click</button>',
+        )
     })
 
     it('preserves framework data attributes (e.g. HTMX, Alpine.js)', () => {
@@ -64,11 +75,14 @@ describe('stripDataAttributes', () => {
 
     it('preserves non-data attributes', () => {
         const code = '<button data-test-id="btn" class="primary" id="submit">Click</button>'
-        expect(stripDataAttributes(code, ['data-test-*'])).toBe('<button class="primary" id="submit">Click</button>')
+        expect(stripDataAttributes(code, ['data-test-*'])).toBe(
+            '<button class="primary" id="submit">Click</button>',
+        )
     })
 
     it('strips multiple matched attributes on a single element', () => {
-        const code = '<input data-test-id="email" data-debug-state="valid" data-hx-get="/check" type="email">'
+        const code =
+            '<input data-test-id="email" data-debug-state="valid" data-hx-get="/check" type="email">'
         expect(stripDataAttributes(code, ['data-test-*', 'data-debug-*'])).toBe(
             '<input data-hx-get="/check" type="email">',
         )
@@ -76,17 +90,23 @@ describe('stripDataAttributes', () => {
 
     it('handles empty attribute values', () => {
         const code = '<button data-test-id="" data-hx-get="/api">Click</button>'
-        expect(stripDataAttributes(code, ['data-test-*'])).toBe('<button data-hx-get="/api">Click</button>')
+        expect(stripDataAttributes(code, ['data-test-*'])).toBe(
+            '<button data-hx-get="/api">Click</button>',
+        )
     })
 
     it('returns the original string unchanged when there are no data-* attributes', () => {
         const code = '<button class="primary" id="submit">Click</button>'
-        expect(stripDataAttributes(code, ['data-test-*'])).toBe('<button class="primary" id="submit">Click</button>')
+        expect(stripDataAttributes(code, ['data-test-*'])).toBe(
+            '<button class="primary" id="submit">Click</button>',
+        )
     })
 
     it('strips single-quoted attributes', () => {
         const code = "<button data-test-id='btn' data-hx-get='/api'>Click</button>"
-        expect(stripDataAttributes(code, ['data-test-*'])).toBe("<button data-hx-get='/api'>Click</button>")
+        expect(stripDataAttributes(code, ['data-test-*'])).toBe(
+            "<button data-hx-get='/api'>Click</button>",
+        )
     })
 
     it('strips mixed single and double quoted attributes', () => {

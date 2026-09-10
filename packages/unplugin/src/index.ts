@@ -38,32 +38,38 @@ const FILE_PATTERN = /\.(vue|svelte|astro|jsx?|tsx?)$/
  * webpack(config) { config.plugins.push(envAttrCleaner()); return config }
  * ```
  */
-const envAttrCleanerPlugin = createUnplugin((userConfig: Partial<IEnvAttrCleanerConfig> = {}) => {
-    const config: IEnvAttrCleanerConfig = {
-        environments: { ...DEFAULT_CONFIG.environments, ...userConfig.environments },
-    }
+// The options type carries `| undefined` rather than only being optional: unplugin
+// derives its adapter signatures with `undefined extends UserOptions ? (options?) :
+// (options)`, so without the union the published types demanded `vite({})` while every
+// doc and example in this repo shows `envAttrCleaner()`.
+const envAttrCleanerPlugin = createUnplugin<Partial<IEnvAttrCleanerConfig> | undefined>(
+    (userConfig = {}) => {
+        const config: IEnvAttrCleanerConfig = {
+            environments: { ...DEFAULT_CONFIG.environments, ...userConfig.environments },
+        }
 
-    const allowedPatterns = resolvePatterns(config)
+        const stripPatterns = resolvePatterns(config)
 
-    return {
-        name: 'env-attr-cleaner',
-        enforce: 'pre' as const,
+        return {
+            name: 'env-attr-cleaner',
+            enforce: 'pre' as const,
 
-        transformInclude(id: string): boolean {
-            return FILE_PATTERN.test(id)
-        },
-
-        transform(code: string): IStripResult | null {
-            return stripDataAttributesWithMap(code, allowedPatterns)
-        },
-
-        vite: {
-            transformIndexHtml(html: string): string {
-                return stripDataAttributes(html, allowedPatterns)
+            transformInclude(id: string): boolean {
+                return FILE_PATTERN.test(id)
             },
-        },
-    }
-})
+
+            transform(code: string): IStripResult | null {
+                return stripDataAttributesWithMap(code, stripPatterns)
+            },
+
+            vite: {
+                transformIndexHtml(html: string): string {
+                    return stripDataAttributes(html, stripPatterns)
+                },
+            },
+        }
+    },
+)
 
 /** Vite plugin adapter. */
 export const vite = envAttrCleanerPlugin.vite

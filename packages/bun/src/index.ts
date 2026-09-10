@@ -7,7 +7,13 @@ import {
 } from './core'
 
 export type { IEnvAttrCleanerConfig }
-export { matchPattern, shouldStrip, stripDataAttributes, DEFAULT_CONFIG, resolvePatterns } from './core'
+export {
+    matchPattern,
+    shouldStrip,
+    stripDataAttributes,
+    DEFAULT_CONFIG,
+    resolvePatterns,
+} from './core'
 
 /** Loader Bun should use for a file the plugin has rewritten. */
 export type TBunLoader = 'ts' | 'tsx' | 'js' | 'jsx'

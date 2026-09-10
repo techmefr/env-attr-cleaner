@@ -40,8 +40,8 @@
     },
     "scripts": {
         "build": "unbuild",
-        "test": "vitest run",
-        "typecheck": "tsc --noEmit"
+        "test": "vitest run --coverage",
+        "typecheck": "tsc --noEmit -p tsconfig.test.json"
     },
     "devDependencies": {
         "@types/node": "^22.0.0",

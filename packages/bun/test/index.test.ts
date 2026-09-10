@@ -34,17 +34,23 @@ describe('shouldStrip', () => {
 describe('stripDataAttributes', () => {
     it('strips nothing when the strip patterns list is empty', () => {
         const code = '<button data-test-id="btn" data-hx-get="/api">Click</button>'
-        expect(stripDataAttributes(code, [])).toBe('<button data-test-id="btn" data-hx-get="/api">Click</button>')
+        expect(stripDataAttributes(code, [])).toBe(
+            '<button data-test-id="btn" data-hx-get="/api">Click</button>',
+        )
     })
 
     it('strips only matched attributes and preserves the rest', () => {
         const code = '<button data-test-id="btn" data-hx-get="/api">Click</button>'
-        expect(stripDataAttributes(code, ['data-test-*'])).toBe('<button data-hx-get="/api">Click</button>')
+        expect(stripDataAttributes(code, ['data-test-*'])).toBe(
+            '<button data-hx-get="/api">Click</button>',
+        )
     })
 
     it('preserves non-data attributes', () => {
         const code = '<button data-test-id="btn" class="primary" id="submit">Click</button>'
-        expect(stripDataAttributes(code, ['data-test-*'])).toBe('<button class="primary" id="submit">Click</button>')
+        expect(stripDataAttributes(code, ['data-test-*'])).toBe(
+            '<button class="primary" id="submit">Click</button>',
+        )
     })
 })
 
@@ -69,7 +75,6 @@ describe('envAttrCleaner bun plugin', () => {
         const plugin = envAttrCleaner({ environments: { production: ['data-analytics-*'] } })
         expect(plugin.name).toBe('bun-plugin-env-attr-cleaner')
     })
-
 })
 
 describe('resolvePatterns', () => {
