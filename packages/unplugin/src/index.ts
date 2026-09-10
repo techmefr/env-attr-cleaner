@@ -9,7 +9,14 @@ import {
 } from './core'
 
 export type { IEnvAttrCleanerConfig, IStripResult }
-export { matchPattern, shouldStrip, stripDataAttributes, stripDataAttributesWithMap } from './core'
+export {
+    matchPattern,
+    shouldStrip,
+    stripDataAttributes,
+    stripDataAttributesWithMap,
+    DEFAULT_CONFIG,
+    resolvePatterns,
+} from './core'
 
 const FILE_PATTERN = /\.(vue|svelte|astro|jsx?|tsx?)$/
 
