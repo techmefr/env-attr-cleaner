@@ -10,7 +10,7 @@
     },
     "dependencies": {
         "env-attr-cleaner": "workspace:*",
-        "svelte": "^5.0.0"
+        "svelte": "^5.57.0"
     },
     "devDependencies": {
         "@sveltejs/vite-plugin-svelte": "^5.0.0",
