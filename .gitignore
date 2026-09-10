@@ -29,3 +29,6 @@ Thumbs.db
 # Temp
 *.tmp
 .temp
+
+# Vitest coverage reports
+coverage

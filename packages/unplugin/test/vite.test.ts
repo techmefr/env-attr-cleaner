@@ -31,7 +31,8 @@ describe('vite adapter', () => {
         it('preserves framework data attributes in production', () => {
             process.env.NODE_ENV = 'production'
             const plugin = vite() as Plugin
-            const html = '<div data-test-id="form" data-hx-post="/api" data-x-show="open">Form</div>'
+            const html =
+                '<div data-test-id="form" data-hx-post="/api" data-x-show="open">Form</div>'
             const result = (plugin.transformIndexHtml as (html: string) => string)(html)
             expect(result).toBe('<div data-hx-post="/api" data-x-show="open">Form</div>')
         })
@@ -55,7 +56,8 @@ describe('vite adapter', () => {
         it('strips data-test-* and data-debug-* in staging', () => {
             process.env.NODE_ENV = 'staging'
             const plugin = vite() as Plugin
-            const html = '<div data-test-id="box" data-debug-state="open" data-hx-get="/api">Content</div>'
+            const html =
+                '<div data-test-id="box" data-debug-state="open" data-hx-get="/api">Content</div>'
             const result = (plugin.transformIndexHtml as (html: string) => string)(html)
             expect(result).toBe('<div data-hx-get="/api">Content</div>')
         })

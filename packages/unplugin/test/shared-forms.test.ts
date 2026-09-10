@@ -13,9 +13,12 @@ describe('documented attribute forms', () => {
         expect(stripDataAttributes(input, PATTERNS)).toBe(expected)
     })
 
-    it.each(STRIPPED_FORMS)('strips the $name through the sourcemap path too', ({ input, expected }) => {
-        expect(stripDataAttributesWithMap(input, PATTERNS)?.code).toBe(expected)
-    })
+    it.each(STRIPPED_FORMS)(
+        'strips the $name through the sourcemap path too',
+        ({ input, expected }) => {
+            expect(stripDataAttributesWithMap(input, PATTERNS)?.code).toBe(expected)
+        },
+    )
 })
 
 describe('pattern metacharacters', () => {

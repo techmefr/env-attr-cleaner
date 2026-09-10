@@ -20,9 +20,12 @@ describe('markup holding tricky code', () => {
         expect(stripDataAttributes(input, PATTERNS)).toBe(expected)
     })
 
-    it.each(TRICKY_MARKUP_CASES)('strips with an $name through the sourcemap path', ({ input, expected }) => {
-        expect(stripDataAttributesWithMap(input, PATTERNS)?.code).toBe(expected)
-    })
+    it.each(TRICKY_MARKUP_CASES)(
+        'strips with an $name through the sourcemap path',
+        ({ input, expected }) => {
+            expect(stripDataAttributesWithMap(input, PATTERNS)?.code).toBe(expected)
+        },
+    )
 })
 
 describe('findTagRanges', () => {

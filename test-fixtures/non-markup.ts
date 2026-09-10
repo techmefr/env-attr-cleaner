@@ -20,7 +20,7 @@ export const NON_MARKUP_CASES: INonMarkupCase[] = [
     },
     {
         name: 'single-quoted string mentioning an attribute',
-        code: "const msg = 'set data-test-id=\"foo\" on the button'",
+        code: 'const msg = \'set data-test-id="foo" on the button\'',
     },
     {
         name: 'double-quoted selector string',
@@ -28,7 +28,7 @@ export const NON_MARKUP_CASES: INonMarkupCase[] = [
     },
     {
         name: 'querySelector call',
-        code: "document.querySelector('[data-test-id=\"submit\"]')",
+        code: 'document.querySelector(\'[data-test-id="submit"]\')',
     },
     {
         name: 'line comment',
