@@ -46,7 +46,7 @@
         "typecheck": "tsc --noEmit"
     },
     "dependencies": {
-        "magic-string": "^1.0.0",
+        "magic-string": "^1.2.3",
         "unplugin": "^2.0.0"
     },
     "peerDependencies": {
