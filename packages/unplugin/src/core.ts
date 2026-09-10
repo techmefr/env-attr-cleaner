@@ -1,5 +1,6 @@
 import MagicString from 'magic-string'
 import type { SourceMap } from 'magic-string'
+import { findTagRanges, isInsideTag } from './tags'
 
 /**
  * Per-environment configuration for data-* attribute patterns to strip.
@@ -95,8 +96,14 @@ export function shouldStrip(attr: string, patterns: string[]): boolean {
  * @returns The processed string with matched data-* attributes removed.
  */
 export function stripDataAttributes(code: string, stripPatterns: string[]): string {
-    return code.replace(DATA_ATTR_REGEX, (match, attr) =>
-        shouldStrip(attr, stripPatterns) ? '' : match,
+    if (stripPatterns.length === 0) {
+        return code
+    }
+
+    const tagRanges = findTagRanges(code)
+
+    return code.replace(DATA_ATTR_REGEX, (match, attr, offset: number) =>
+        shouldStrip(attr, stripPatterns) && isInsideTag(offset, tagRanges) ? '' : match,
     )
 }
 
@@ -129,10 +136,11 @@ export function stripDataAttributesWithMap(
     }
 
     const s = new MagicString(code)
+    const tagRanges = findTagRanges(code)
     let changed = false
 
     for (const match of code.matchAll(DATA_ATTR_REGEX)) {
-        if (shouldStrip(match[1], stripPatterns)) {
+        if (shouldStrip(match[1], stripPatterns) && isInsideTag(match.index, tagRanges)) {
             s.remove(match.index, match.index + match[0].length)
             changed = true
         }

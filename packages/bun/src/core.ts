@@ -1,3 +1,5 @@
+import { findTagRanges, isInsideTag } from './tags'
+
 /**
  * Per-environment configuration for data-* attribute patterns to strip.
  * Each key is an environment name and its value is a list of glob-style patterns to remove.
@@ -99,8 +101,14 @@ export function shouldStrip(attr: string, patterns: string[]): boolean {
  * @returns The processed string with matched data-* attributes removed.
  */
 export function stripDataAttributes(code: string, stripPatterns: string[]): string {
-    return code.replace(DATA_ATTR_REGEX, (match, attr) =>
-        shouldStrip(attr, stripPatterns) ? '' : match,
+    if (stripPatterns.length === 0) {
+        return code
+    }
+
+    const tagRanges = findTagRanges(code)
+
+    return code.replace(DATA_ATTR_REGEX, (match, attr, offset: number) =>
+        shouldStrip(attr, stripPatterns) && isInsideTag(offset, tagRanges) ? '' : match,
     )
 }
 

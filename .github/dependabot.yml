@@ -12,16 +12,18 @@ updates:
       actions:
         patterns: ['*']
 
-  # Only the published packages are worth an update PR. examples/* exist to be built
-  # once per CI run; their framework closure would drown this in noise.
+  # One PR for everything. The first run of this file grouped development dependencies
+  # only, which left every runtime dependency to its own PR — seven at once on a repo
+  # with two source dependencies. Reviewing one combined update against one CI run is
+  # the whole point here.
   - package-ecosystem: npm
     directories:
       - /
       - /packages/unplugin
       - /packages/bun
+      - /examples/*
     schedule:
       interval: monthly
     groups:
-      dev-dependencies:
-        dependency-type: development
+      all-dependencies:
         patterns: ['*']

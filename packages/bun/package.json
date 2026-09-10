@@ -4,6 +4,9 @@
     "description": "Bun plugin to strip data-* attributes from production builds",
     "author": "techmefr",
     "license": "MIT",
+    "engines": {
+        "node": ">=18.0.0"
+    },
     "type": "module",
     "exports": {
         ".": {
@@ -41,8 +44,9 @@
         "typecheck": "tsc --noEmit"
     },
     "devDependencies": {
+        "@types/node": "^22.0.0",
         "unbuild": "^3.0.0",
         "vitest": "^1.6.0",
-        "typescript": "^5.3.3"
+        "typescript": "^5.9.3"
     }
 }
