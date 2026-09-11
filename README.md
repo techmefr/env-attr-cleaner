@@ -3,6 +3,8 @@
 > Automatically remove `data-*` test attributes in production.
 
 [![CI](https://github.com/techmefr/env-attr-cleaner/actions/workflows/ci.yml/badge.svg)](https://github.com/techmefr/env-attr-cleaner/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/env-attr-cleaner?label=env-attr-cleaner)](https://www.npmjs.com/package/env-attr-cleaner)
+[![npm](https://img.shields.io/npm/v/env-attr-cleaner-bun?label=env-attr-cleaner-bun)](https://www.npmjs.com/package/env-attr-cleaner-bun)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 ---
@@ -196,8 +198,11 @@ state? They live in [test-casebook](https://github.com/techmefr/test-casebook), 
 
 | Package | Version | Bundlers |
 |---------|---------|---------|
-| [env-attr-cleaner](./packages/unplugin) | 1.0.6 | Vite, Rollup, Webpack, esbuild — Nuxt, Vue, React, Svelte, Astro, Next.js |
-| [env-attr-cleaner-bun](./packages/bun) | 1.0.6 | Bun |
+| [env-attr-cleaner](./packages/unplugin) | [![npm](https://img.shields.io/npm/v/env-attr-cleaner)](https://www.npmjs.com/package/env-attr-cleaner) | Vite, Rollup, Webpack, esbuild — Nuxt, Vue, React, Svelte, Astro, Next.js |
+| [env-attr-cleaner-bun](./packages/bun) | [![npm](https://img.shields.io/npm/v/env-attr-cleaner-bun)](https://www.npmjs.com/package/env-attr-cleaner-bun) | Bun |
+
+Both packages are versioned and released together from this repository, so the two badges above
+normally show the same number. See the [changelog](./CHANGELOG.md) for what changed in each release.
 
 ```bash
 # Vite / Rollup / Webpack / esbuild / Nuxt / Next.js
