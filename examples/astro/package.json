@@ -10,6 +10,6 @@
     },
     "dependencies": {
         "env-attr-cleaner": "workspace:*",
-        "astro": "^5.0.0"
+        "astro": "^7.3.1"
     }
 }

@@ -44,7 +44,7 @@
         "typecheck": "tsc --noEmit -p tsconfig.test.json"
     },
     "devDependencies": {
-        "@types/node": "^22.0.0",
+        "@types/node": "^26.5.0",
         "unbuild": "^3.0.0",
         "vitest": "^5.0.0",
         "typescript": "^5.9.3"
