@@ -66,19 +66,29 @@ jobs:
           for dir in packages/unplugin packages/bun; do
             PKG_NAME=$(node -p "require('./$dir/package.json').name")
             LOCAL_VERSION=$(node -p "require('./$dir/package.json').version")
-            # A registry outage used to be read as "never published", which then tried to
-            # publish. Only a genuine 404 counts as not-yet-published; anything else fails
-            # the job instead of guessing.
-            if ! VIEW_OUTPUT=$(npm view "$PKG_NAME" version 2>&1); then
-              if printf '%s' "$VIEW_OUTPUT" | grep -q 'E404'; then
-                PUBLISHED_VERSION="0.0.0"
-              else
-                echo "::error::could not read the published version of $PKG_NAME: $VIEW_OUTPUT"
-                exit 1
-              fi
+            # A registry outage must not read as "never published" and trigger a publish,
+            # so only a genuine 404 counts as not-yet-published and anything else fails
+            # the job. stderr goes to a file rather than into the value: npm prints
+            # "Unknown project config" warnings for the pnpm-only keys in .npmrc, and
+            # folding those into PUBLISHED_VERSION made every comparison unequal — which
+            # is how this step tried to republish 1.0.6 over itself.
+            VIEW_ERROR="${RUNNER_TEMP:-/tmp}/npm-view-$(basename "$dir").log"
+            if PUBLISHED_VERSION=$(npm view "$PKG_NAME" version 2>"$VIEW_ERROR"); then
+              PUBLISHED_VERSION=$(printf '%s' "$PUBLISHED_VERSION" | tr -d '[:space:]')
+            elif grep -q 'E404' "$VIEW_ERROR"; then
+              PUBLISHED_VERSION="0.0.0"
             else
-              PUBLISHED_VERSION="$VIEW_OUTPUT"
+              # Drop npm's own warnings so the actual failure leads the message.
+              REASON=$(grep -v '^npm warn' "$VIEW_ERROR" | head -5 | tr '\n' ' ')
+              echo "::error::could not read the published version of $PKG_NAME: $REASON"
+              exit 1
             fi
+
+            if [ -z "$PUBLISHED_VERSION" ]; then
+              echo "::error::read an empty published version for $PKG_NAME"
+              exit 1
+            fi
+
             if [ "$LOCAL_VERSION" != "$PUBLISHED_VERSION" ]; then
               echo "Publishing $PKG_NAME@$LOCAL_VERSION (was $PUBLISHED_VERSION)"
               (cd "$dir" && npm publish)
