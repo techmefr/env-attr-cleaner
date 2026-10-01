@@ -9,6 +9,6 @@
     },
     "dependencies": {
         "env-attr-cleaner": "workspace:*",
-        "nuxt": "^3.15.0"
+        "nuxt": "^4.5.2"
     }
 }
